@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bir şey soracağım 💗</title>
+<style>
+  *{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#ffd1e8,#fff0f7,#ffe4f1);display:flex;align-items:flex-start;justify-content:center;overflow-x:hidden;overflow-y:auto;color:#5b1235;padding:22px 0} .hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}.heart{position:absolute;font-size:22px;animation:float 7s linear infinite;opacity:.75}@keyframes float{0%{transform:translateY(105vh) scale(.7) rotate(0deg);opacity:0}10%{opacity:.8}100%{transform:translateY(-15vh) scale(1.4) rotate(360deg);opacity:0}} .card{position:relative;z-index:1;width:min(92vw,430px);background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border-radius:28px;padding:28px 22px;box-shadow:0 20px 60px rgba(216,65,135,.25);text-align:center;border:1px solid rgba(255,255,255,.7);margin:auto 0} h1{font-size:28px;margin:5px 0 10px} p{font-size:16px;line-height:1.45;margin:8px 0 20px}.screen{display:none}.screen.active{display:block;animation:pop .35s ease}@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}} .gif{font-size:64px;margin:10px 0 5px;animation:bounce 1.3s infinite}@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}} .btns{display:flex;gap:14px;justify-content:center;align-items:center;margin-top:24px;min-height:70px;position:relative}.btn{border:0;border-radius:999px;padding:14px 24px;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 10px 20px rgba(204,52,127,.18);transition:.2s}.yes{background:#ff4fa3;color:white}.no{background:#fff;color:#d63384;border:2px solid #ffd0e6;position:relative}.btn:hover{transform:scale(1.04)} label{display:block;text-align:left;font-weight:700;margin:14px 0 7px;color:#7b2350} input,select,textarea{width:100%;border:2px solid #ffd0e6;border-radius:16px;padding:13px 14px;font-size:16px;outline:none;background:#fff;color:#5b1235} textarea{min-height:86px;resize:vertical}.next{width:100%;margin-top:18px;background:#ff4fa3;color:white}.small{font-size:13px;opacity:.75}.success h1{color:#d63384}.loader{display:none;margin-top:10px;font-size:14px}.shake{animation:shake .35s}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+@media (max-height: 760px){
+  body{align-items:flex-start;padding:14px 0 28px}
+  .card{margin:0;width:min(94vw,430px);padding:22px 18px}
+  .gif{font-size:48px;margin:4px 0}
+  h1{font-size:23px}
+  p{font-size:14px;margin-bottom:12px}
+  label{margin:10px 0 5px}
+  input,select,textarea{padding:11px 12px;font-size:15px}
+  textarea{min-height:70px}
+  .btns{margin-top:16px}
+}
+</style>
+</head>
+<body>
+<div class="hearts" id="hearts"></div>
+<div class="card" id="card">
+  <section class="screen active" id="s1">
+    <div class="gif">🥹💗</div>
+    <h1>Benimle buluşur musun?</h1>
+    <p>Sadece küçük, tatlı bir date… cevabını dikkatli seç 😌</p>
+    <div class="btns" id="btnArea">
+      <button class="btn yes" onclick="goForm()">Evet 💕</button>
+      <button class="btn no" id="noBtn">Hayır</button>
+    </div>
+    <p class="small">Not: Hayır butonu biraz utangaçtır.</p>
+  </section>
+
+  <section class="screen" id="s2">
+    <div class="gif">🌸</div>
+    <h1>Peki... Ne zaman müsaitsiniz?</h1>
+    <p>Güzel bir gün seç bakalım.</p>
+    <label>İsmin</label>
+    <input id="name" placeholder="İsmini yaz" />
+    <label>Tarih</label>
+    <input id="date" type="date" />
+    <label>Saat</label>
+    <input id="time" type="time" />
+    <label>Mekan</label>
+    <select id="place">
+      <option value="">Mekan seç</option>
+      <option>Kahve içelim ☕</option>
+      <option>Yemek yiyelim 🍝</option>
+      <option>Sahilde yürüyelim 🌊</option>
+      <option>Sinemaya gidelim 🎬</option>
+      <option>Sürpriz olsun 🎁</option>
+    </select>
+    <label>Notun</label>
+    <textarea id="note" placeholder="İstersen küçük bir not yaz..."></textarea>
+    <button class="btn next" onclick="sendTelegram()">Gönder 💌</button>
+    <div class="loader" id="loader">Gönderiliyor...</div>
+  </section>
+
+  <section class="screen success" id="s3">
+    <div class="gif">💖</div>
+    <h1>Cevabın alındı!</h1>
+    <p>Şimdiden çok heyecanlıyım. En kısa zamanda görüşürüz 😍</p>
+  </section>
+</div>
+
+<script>
+const BOT_TOKEN = "8992861206:AAFDngdYZCC9-2Zp7yYgafHRgIC3Z7HunSA";
+const CHAT_ID = "1724704824";
+
+const hearts = document.getElementById('hearts');
+const emojis=['💗','💕','💖','💘','🌸','✨'];
+for(let i=0;i<28;i++){const h=document.createElement('div');h.className='heart';h.textContent=emojis[Math.floor(Math.random()*emojis.length)];h.style.left=Math.random()*100+'vw';h.style.animationDelay=Math.random()*7+'s';h.style.animationDuration=(5+Math.random()*6)+'s';hearts.appendChild(h)}
+
+const noBtn=document.getElementById('noBtn');
+const btnArea=document.getElementById('btnArea');
+function moveNo(){
+  noBtn.style.position='fixed';
+  const maxX=window.innerWidth-noBtn.offsetWidth-20;
+  const maxY=window.innerHeight-noBtn.offsetHeight-20;
+  noBtn.style.left=Math.max(10,Math.random()*maxX)+'px';
+  noBtn.style.top=Math.max(10,Math.random()*maxY)+'px';
+  noBtn.textContent=['Emin misin?','Yakalama beni 😅','Bence evet de','Hayır yok 😌','Kaçtım!'][Math.floor(Math.random()*5)];
+}
+noBtn.addEventListener('mouseenter',moveNo);
+noBtn.addEventListener('touchstart',function(e){e.preventDefault();moveNo();});
+noBtn.addEventListener('click',moveNo);
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function goForm(){show('s2')}
+function fmtDate(v){if(!v)return '-'; const [y,m,d]=v.split('-'); return `${d}.${m}.${y}`}
+async function sendTelegram(){
+  const name=document.getElementById('name').value.trim()||'İsimsiz';
+  const date=document.getElementById('date').value;
+  const time=document.getElementById('time').value;
+  const place=document.getElementById('place').value;
+  const note=document.getElementById('note').value.trim()||'-';
+  const card=document.getElementById('card');
+  if(!date||!time||!place){card.classList.add('shake');setTimeout(()=>card.classList.remove('shake'),400);alert('Tarih, saat ve mekan seç lütfen 💗');return;}
+  const msg=`💘 Yeni date cevabı geldi!\n\n👤 İsim: ${name}\n📅 Tarih: ${fmtDate(date)}\n🕒 Saat: ${time}\n📍 Mekan: ${place}\n💌 Not: ${note}`;
+  document.getElementById('loader').style.display='block';
+  try{
+    const url=`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT_ID,text:msg})});
+    if(!res.ok) throw new Error('Telegram gönderimi başarısız');
+    show('s3');
+  }catch(e){
+    alert('Mesaj gönderilemedi. İnternet bağlantısı veya bot token/chat ID kontrol edilmeli.');
+  }finally{document.getElementById('loader').style.display='none';}
+}
+</script>
+</body>
+</html>
