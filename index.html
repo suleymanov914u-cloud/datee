@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Date Daveti 💖</title>
+
+<style>
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#ffd6e8,#ffeaf4,#fff8fb);
+  color:#5a1230;
+  overflow-x:hidden;
+}
+body{padding:25px 0 60px}
+.card{
+  width:92%;
+  max-width:430px;
+  margin:35px auto;
+  background:white;
+  border-radius:28px;
+  padding:28px;
+  box-shadow:0 15px 40px rgba(255,77,140,.25);
+  text-align:center;
+}
+h1{font-size:28px;margin:10px 0}
+p{font-size:17px}
+.big{font-size:55px}
+button{
+  border:0;
+  padding:14px 24px;
+  border-radius:999px;
+  font-size:18px;
+  cursor:pointer;
+  margin:8px;
+  background:#ff4f9a;
+  color:white;
+  box-shadow:0 8px 18px rgba(255,79,154,.35);
+}
+.noBtn{
+  background:#777;
+  position:relative;
+  transition:.2s;
+}
+input,select,textarea{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border:2px solid #ffd1e4;
+  border-radius:18px;
+  font-size:16px;
+}
+textarea{min-height:90px}
+.hidden{display:none}
+.success{
+  font-size:22px;
+  color:#d61b72;
+  font-weight:bold;
+}
+.hearts span{
+  position:fixed;
+  bottom:-40px;
+  font-size:28px;
+  animation:float 8s linear infinite;
+  opacity:.7;
+  z-index:0;
+}
+@keyframes float{
+  from{transform:translateY(0) rotate(0)}
+  to{transform:translateY(-120vh) rotate(360deg)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="hearts">
+  <span style="left:5%;animation-delay:0s">💖</span>
+  <span style="left:18%;animation-delay:1s">💕</span>
+  <span style="left:32%;animation-delay:2s">🌸</span>
+  <span style="left:50%;animation-delay:.5s">💗</span>
+  <span style="left:68%;animation-delay:1.5s">💞</span>
+  <span style="left:82%;animation-delay:2.5s">🌷</span>
+</div>
+
+<div class="card" id="page1">
+  <div class="big">🥹💖</div>
+  <h1>Benimle buluşur musun?</h1>
+  <p>Çok ciddi bir soru... iyi düşün 😄</p>
+  <button onclick="goForm()">Evet 💘</button>
+  <button class="noBtn" id="noBtn">Hayır</button>
+  <p>Hayır butonu biraz utangaç olabilir 😅</p>
+</div>
+
+<div class="card hidden" id="page2">
+  <div class="big">🌹</div>
+  <h1>Peki... Ne zaman müsaitsiniz?</h1>
+
+  <input id="name" placeholder="İsmin">
+  <input id="date" type="date">
+  <input id="time" type="time">
+
+  <select id="place">
+    <option value="">Mekan seç</option>
+    <option>Kahve içelim ☕</option>
+    <option>Yemek yiyelim 🍝</option>
+    <option>Sahilde yürüyelim 🌊</option>
+    <option>Sinema yapalım 🎬</option>
+    <option>Sürpriz olsun 🎁</option>
+  </select>
+
+  <textarea id="note" placeholder="İstersen küçük bir not yaz 💌"></textarea>
+
+  <button onclick="sendTelegram()">Gönder 💌</button>
+  <p id="status"></p>
+</div>
+
+<div class="card hidden" id="page3">
+  <div class="big">🎉💖</div>
+  <p class="success">Cevabın gönderildi!</p>
+  <p>Ben zaten sabırsızlıkla bekliyordum 😄</p>
+</div>
+
+<script>
+const BOT_TOKEN = "8992861206:AAEIn82OwxcvGHz00WwsJMBpjFFbwnta1pY";
+const CHAT_ID = "1724704824";
+
+const noBtn = document.getElementById("noBtn");
+
+function moveNo(){
+  const x = Math.random() * 240 - 120;
+  const y = Math.random() * 170 - 85;
+  noBtn.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+noBtn.addEventListener("mouseover", moveNo);
+noBtn.addEventListener("click", moveNo);
+noBtn.addEventListener("touchstart", function(e){
+  e.preventDefault();
+  moveNo();
+});
+
+function goForm(){
+  document.getElementById("page1").classList.add("hidden");
+  document.getElementById("page2").classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+
+function sendTelegram(){
+  const name = document.getElementById("name").value || "Yazmadı";
+  const date = document.getElementById("date").value;
+  const time = document.getElementById("time").value;
+  const place = document.getElementById("place").value;
+  const note = document.getElementById("note").value || "Yok";
+
+  if(!date || !time || !place){
+    document.getElementById("status").innerText = "Lütfen tarih, saat ve mekan seç 💕";
+    return;
+  }
+
+  const text =
+`💖 Yeni date cevabı geldi!
+
+👤 İsim: ${name}
+📅 Tarih: ${date}
+🕒 Saat: ${time}
+📍 Mekan: ${place}
+💌 Not: ${note}`;
+
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+  const data = new URLSearchParams();
+  data.append("chat_id", CHAT_ID);
+  data.append("text", text);
+
+  fetch(url,{
+    method:"POST",
+    mode:"no-cors",
+    body:data
+  });
+
+  document.getElementById("page2").classList.add("hidden");
+  document.getElementById("page3").classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+</script>
+
+</body>
+</html>
